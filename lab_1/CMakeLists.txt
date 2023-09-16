@@ -4,7 +4,7 @@ project(lab1)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-g -Wall -Werror -O0)
+add_compile_options(-g -Wall -O0)
 
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
