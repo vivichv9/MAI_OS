@@ -37,4 +37,25 @@ pipe1 или в pipe2 в зависимости от правила фильтр
 ```
 
 
+### Команды для запуска:
+Build project:
+```
+make build
+```
+
+Run program:
+```
+make run
+```
+
+Check strace:
+```
+make strace
+```
+
+
+
+
+
+
 
