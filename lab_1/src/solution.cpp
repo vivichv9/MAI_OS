@@ -3,23 +3,24 @@
 #define BUFFER_SIZE 512
 
 void solution() {
-  const std::pair<int, int> files_desc = open_files();
+  std::pair<int, int> files_desc;
+  std::pair<int, int> pipe1_desc;
+  std::pair<int, int> pipe2_desc;
 
-  const std::pair<int, int> pipe1_desc = open_pipe();
-  const std::pair<int, int> pipe2_desc = open_pipe();
-
-  pid_t pid1 = fork();
+  pid_t pid1 = -1;
   pid_t pid2 = -1;
 
-  if (pid1 > 0) {
-    pid2 = fork();
+  try {
+    open_files(files_desc);
 
-    if (pid2 == -1) {
-      throw new std::runtime_error("process 1 create error");
-    }  
+    open_pipe(pipe1_desc);
+    open_pipe(pipe2_desc);
 
-  } else if (pid1 == -1) {
-    throw new std::runtime_error("process 2 create error");
+    create_process(pid1, pid2);
+
+  } catch (std::runtime_error* e) {
+    std::cerr << e->what() << std::endl;
+    return;
   }
 
   if (pid1 != 0 && pid2 != 0) {
@@ -33,7 +34,7 @@ void solution() {
   }
 }
 
-std::pair<int, int> open_files() {
+void open_files(std::pair<int, int>& files_descs) {
   std::string file_name_1;
   std::string file_name_2;
 
@@ -45,35 +46,36 @@ std::pair<int, int> open_files() {
   int f1_desc = open(file_name_1.c_str(), O_WRONLY | O_APPEND, 0666);
   int f2_desc = open(file_name_2.c_str(), O_WRONLY | O_APPEND, 0666);
 
-  std::pair<int, int> files_desc{f1_desc, f2_desc};
+  if (f1_desc < 0 && f2_desc < 0) {
+    throw new std::runtime_error("Error with open files: " + file_name_1 + ", " + file_name_2);
+  }
 
-  if (files_desc.first < 0) {
+  if (f1_desc < 0) {
     throw new std::runtime_error("Error with open file: " + file_name_1);
   }
 
-  if (files_desc.second < 0) {
+  if (f2_desc < 0) {
     throw new std::runtime_error("Error with open file: " + file_name_2);
   }
 
-  return files_desc;
+  files_descs.first = f1_desc;
+  files_descs.second = f2_desc;
 }
 
-std::pair<int, int> open_pipe() {
-  int descs[2] = {-1, -1};
+void open_pipe(std::pair<int, int>& pipe_descs) {
+  int descs[2]{-1, -1};
   int pipe_status = pipe(descs);
 
   if (pipe_status < 0) {
     throw new std::runtime_error("Pipe create error!");
   }
 
-  std::pair<int, int> pipe_desc{descs[0], descs[1]};
-
-  return pipe_desc;
+  pipe_descs.first = descs[0];
+  pipe_descs.second = descs[1];
 }
 
-Pipes string_filter() {
-  int filter_flag = 0;
-  filter_flag = rand() % 101;
+Pipes string_filter() noexcept {
+  int filter_flag = rand() % 101;
 
   if (filter_flag <= 80) {
     return FIRST;
@@ -82,7 +84,7 @@ Pipes string_filter() {
   return SECOND;
 }
 
-void input_handler(int pipe1_write, int pipe2_write) {
+void input_handler(int pipe1_write, int pipe2_write) noexcept {
   while (true) {
     std::cout << "Enter string: ";
     std::string buf;
@@ -106,10 +108,9 @@ void input_handler(int pipe1_write, int pipe2_write) {
     }
     sleep(1);
   }
-  
 }
 
-void first_process_handler(int pipe1_read, int file1_desc) {
+void first_process_handler(int pipe1_read, int file1_desc) noexcept {
   dup2(pipe1_read, STDIN_FILENO);
   dup2(file1_desc, STDOUT_FILENO);
 
@@ -122,7 +123,7 @@ void first_process_handler(int pipe1_read, int file1_desc) {
   }
 }
 
-void second_process_handler(int pipe2_read, int file2_desc) {
+void second_process_handler(int pipe2_read, int file2_desc) noexcept {
   dup2(pipe2_read, STDIN_FILENO);
   dup2(file2_desc, STDOUT_FILENO);
 
@@ -132,5 +133,21 @@ void second_process_handler(int pipe2_read, int file2_desc) {
     std::cout << "second: ";
     std::cout << buf << std::endl; 
     sleep(1);
+  }
+}
+
+void create_process(int& pid1, int& pid2) {
+  pid1 = fork();
+  pid2 = -1;
+
+  if (pid1 > 0) {
+    pid2 = fork();
+
+    if (pid2 == -1) {
+      throw new std::runtime_error("process 1 create error");
+    }  
+
+  } else if (pid1 == -1) {
+    throw new std::runtime_error("process 2 create error");
   }
 }

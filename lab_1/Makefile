@@ -1,4 +1,4 @@
-.PHONY: build run test clean strace
+.PHONY: build run clean strace
 
 build: clean
 	mkdir build
@@ -6,9 +6,6 @@ build: clean
 
 run:
 	./build/*_sh
-
-test:
-	./build/*_test
 
 clean:
 	rm -rf ./build/
