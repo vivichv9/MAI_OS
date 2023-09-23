@@ -18,8 +18,8 @@ void solution() {
 
     create_process(pid1, pid2);
 
-  } catch (std::runtime_error* e) {
-    std::cerr << e->what() << std::endl;
+  } catch (std::runtime_error& e) {
+    std::cerr << e.what() << std::endl;
     return;
   }
 
@@ -47,15 +47,15 @@ void open_files(std::pair<int, int>& files_descs) {
   int f2_desc = open(file_name_2.c_str(), O_WRONLY | O_APPEND, 0666);
 
   if (f1_desc < 0 && f2_desc < 0) {
-    throw new std::runtime_error("Error with open files: " + file_name_1 + ", " + file_name_2);
+    throw std::runtime_error("Error with open files: " + file_name_1 + ", " + file_name_2);
   }
 
   if (f1_desc < 0) {
-    throw new std::runtime_error("Error with open file: " + file_name_1);
+    throw std::runtime_error("Error with open file: " + file_name_1);
   }
 
   if (f2_desc < 0) {
-    throw new std::runtime_error("Error with open file: " + file_name_2);
+    throw std::runtime_error("Error with open file: " + file_name_2);
   }
 
   files_descs.first = f1_desc;
@@ -67,7 +67,7 @@ void open_pipe(std::pair<int, int>& pipe_descs) {
   int pipe_status = pipe(descs);
 
   if (pipe_status < 0) {
-    throw new std::runtime_error("Pipe create error!");
+    throw std::runtime_error("Pipe create error!");
   }
 
   pipe_descs.first = descs[0];
@@ -144,10 +144,10 @@ void create_process(int& pid1, int& pid2) {
     pid2 = fork();
 
     if (pid2 == -1) {
-      throw new std::runtime_error("process 1 create error");
+      throw std::runtime_error("process 1 create error");
     }  
 
   } else if (pid1 == -1) {
-    throw new std::runtime_error("process 2 create error");
+    throw std::runtime_error("process 2 create error");
   }
 }
