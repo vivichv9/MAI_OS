@@ -5,10 +5,10 @@ build: clean
 	cd ./build; cmake ..; make all
 
 run:
-	./build/*_sh
+	./build/*_main_exe
 
 clean:
 	rm -rf ./build/
 
 strace:
-	cd ./build; strace ./*_sh 	
+	strace -f ./build/*_main_exe 	

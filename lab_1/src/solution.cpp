@@ -1,6 +1,6 @@
 #include "../include/solution.hpp"
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 4096
 
 void solution() {
   std::pair<int, int> files_desc;
@@ -18,19 +18,19 @@ void solution() {
 
     create_process(pid1, pid2);
 
+    if (pid1 != 0 && pid2 != 0) {
+      input_handler(pipe1_desc.second, pipe2_desc.second);
+    
+    } else if (pid1 == 0) {
+      second_process_handler(pipe1_desc.first, files_desc.first);
+
+    } else if (pid2 == 0 && pid1 != 0) {
+      second_process_handler(pipe2_desc.first, files_desc.second);
+    }
+
   } catch (std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
     return;
-  }
-
-  if (pid1 != 0 && pid2 != 0) {
-    input_handler(pipe1_desc.second, pipe2_desc.second);
-  
-  } else if (pid1 == 0) {
-    first_process_handler(pipe1_desc.first, files_desc.first);
-
-  } else if (pid2 == 0 && pid1 != 0) {
-    second_process_handler(pipe2_desc.first, files_desc.second);
   }
 }
 
@@ -87,10 +87,10 @@ Pipes string_filter() noexcept {
 void input_handler(int pipe1_write, int pipe2_write) noexcept {
   while (true) {
     std::cout << "Enter string: ";
-    std::string buf;
-    std::cin >> buf;
+    char buf[BUFFER_SIZE];
+    std::cin.getline(buf, BUFFER_SIZE);
 
-    if (buf.size() > BUFFER_SIZE) {
+    if (strlen(buf) > BUFFER_SIZE) {
       std::cerr << "Length out of buffer. Buffer size: " << BUFFER_SIZE << " characters" << std::endl;
       continue;
     }
@@ -99,41 +99,42 @@ void input_handler(int pipe1_write, int pipe2_write) noexcept {
 
     switch(filter_code) {
       case FIRST:
-        write(pipe1_write, buf.c_str(), BUFFER_SIZE);
+        write(pipe1_write, buf, BUFFER_SIZE);
         break;
 
       case SECOND:
-        write(pipe2_write, buf.c_str(), BUFFER_SIZE);
+        write(pipe2_write, buf, BUFFER_SIZE);
         break;
     }
-    sleep(1);
   }
 }
 
-void first_process_handler(int pipe1_read, int file1_desc) noexcept {
-  dup2(pipe1_read, STDIN_FILENO);
-  dup2(file1_desc, STDOUT_FILENO);
+void first_process_handler(int pipe1_read, int file1_desc) {
+  int flag1 = dup2(pipe1_read, STDIN_FILENO);
+  int flag2 = dup2(file1_desc, STDOUT_FILENO);
 
-  while(true) {
-    char buf[BUFFER_SIZE];
-    read(pipe1_read, buf, BUFFER_SIZE);
-    std::cout << "first: ";
-    std::cout << buf << std::endl;
-    sleep(1);
+  if (flag1 == -1 || flag2 == -1) {
+    throw std::runtime_error("lol");
+  }
+
+  int status = execl("/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_first", "/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_first", NULL);
+  if (status < 0) {
+    throw std::runtime_error("lol");
   }
 }
 
-void second_process_handler(int pipe2_read, int file2_desc) noexcept {
-  dup2(pipe2_read, STDIN_FILENO);
-  dup2(file2_desc, STDOUT_FILENO);
+void second_process_handler(int pipe2_read, int file2_desc) {
+  int flag1 = dup2(pipe2_read, STDIN_FILENO);
+  int flag2 = dup2(file2_desc, STDOUT_FILENO);
 
-  while(true) {
-    char buf[BUFFER_SIZE];
-    read(pipe2_read, buf, BUFFER_SIZE);
-    std::cout << "second: ";
-    std::cout << buf << std::endl; 
-    sleep(1);
+  if (flag1 == -1 || flag2 == -1) {
+    throw std::runtime_error("lol");
   }
+
+  int status = execl("/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_second", "/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_second", NULL);
+  if (status < 0) {
+    throw std::runtime_error("lol");
+  }  
 }
 
 void create_process(int& pid1, int& pid2) {
