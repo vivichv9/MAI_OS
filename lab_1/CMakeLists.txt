@@ -22,13 +22,31 @@ add_library(${CMAKE_PROJECT_NAME}_lib
             ${ENUMS})
 
 add_executable(${CMAKE_PROJECT_NAME}_main_exe main_files/main.cpp)
+
+set_target_properties(${PROJECT_NAME}_main_exe PROPERTIES
+                      CXX_STANDARD 20
+                      CXX_STANDARD_REQUIRED YES
+                      CXX_EXTENSIONS NO)
+
 add_dependencies(${CMAKE_PROJECT_NAME}_main_exe ${CMAKE_PROJECT_NAME}_lib)
 target_link_libraries(${CMAKE_PROJECT_NAME}_main_exe ${CMAKE_PROJECT_NAME}_lib)
 
 add_executable(${CMAKE_PROJECT_NAME}_main_first main_files/main_first_process.cpp)
+
+set_target_properties(${PROJECT_NAME}_main_first PROPERTIES
+                      CXX_STANDARD 20
+                      CXX_STANDARD_REQUIRED YES
+                      CXX_EXTENSIONS NO)
+
 add_dependencies(${CMAKE_PROJECT_NAME}_main_first ${CMAKE_PROJECT_NAME}_lib)
 target_link_libraries(${CMAKE_PROJECT_NAME}_main_first ${CMAKE_PROJECT_NAME}_lib)
 
 add_executable(${CMAKE_PROJECT_NAME}_main_second main_files/main_second_process.cpp)
+
+set_target_properties(${PROJECT_NAME}_main_second PROPERTIES
+                      CXX_STANDARD 20
+                      CXX_STANDARD_REQUIRED YES
+                      CXX_EXTENSIONS NO)
+
 add_dependencies(${CMAKE_PROJECT_NAME}_main_second ${CMAKE_PROJECT_NAME}_lib)
 target_link_libraries(${CMAKE_PROJECT_NAME}_main_second ${CMAKE_PROJECT_NAME}_lib)
