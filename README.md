@@ -6,5 +6,5 @@
 #### labs & variants:
 |Lab Work|Variant|
 |-|--------|
-|[Lab1](/lab_1/)|7|
+|[Lab1](/lab_1/)|19|
 ||| 
