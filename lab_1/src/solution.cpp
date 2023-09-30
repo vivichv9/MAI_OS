@@ -22,7 +22,7 @@ void solution() {
       input_handler(pipe1_desc.second, pipe2_desc.second);
     
     } else if (pid1 == 0) {
-      second_process_handler(pipe1_desc.first, files_desc.first);
+      first_process_handler(pipe1_desc.first, files_desc.first);
 
     } else if (pid2 == 0 && pid1 != 0) {
       second_process_handler(pipe2_desc.first, files_desc.second);
@@ -78,10 +78,10 @@ Pipes string_filter() noexcept {
   int filter_flag = rand() % 101;
 
   if (filter_flag <= 80) {
-    return FIRST;
+    return Pipes::FIRST;
   }
 
-  return SECOND;
+  return Pipes::SECOND;
 }
 
 void input_handler(int pipe1_write, int pipe2_write) noexcept {
