@@ -1,14 +1,30 @@
 #include "../include/process.hpp"
+#include "fcntl.h"
 
-#define BUFFER_SIZE 4096
+bool is_vowel(char e) {
+  if (e != 'a' &&  e != 'A' && e != 'e' && e != 'E' && 
+        e != 'i' && e != 'I' && e != 'o' && e != 'O' && e != 'U' &&
+        e != 'u' && e != 'y' && e != 'Y') {
 
-void process_handler() {
-  char* buf = new char[BUFFER_SIZE];
-
-  while(true) {
-    read(STDIN_FILENO, buf, BUFFER_SIZE);
-    std::cout << buf << std::endl;
+    return false;
   }
 
-  delete[] buf;
+  return true;
+}
+
+void process_handler() {
+ std::string buf;
+
+  while(true) {
+    std::cin >> buf;
+    std::string new_str;
+
+    for (auto& e : buf) {
+      if (!is_vowel(e)) {
+        new_str.push_back(e);
+      }
+    }
+
+    std::cout << new_str.c_str() << std::endl;
+  }
 }

@@ -7,6 +7,7 @@
 #include <utility>
 #include <string.h>
 #include <signal.h>
+#include <sstream>
 #include "../enums/Pipes.hpp"
 
 void solution();

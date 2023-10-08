@@ -87,38 +87,20 @@ Pipes string_filter() noexcept {
 void input_handler(int pipe1_write, int pipe2_write) noexcept {
   std::string buf;
   while (true) {
-    std::cout << "Enter string: " << std::endl;
-    std::cin >> buf;
-
-    if (buf == "q") {
-      std::cout << "Нou want to stop the handler?\n(y / any symbol): " << std::endl;
-      std::string flag;
-      std::cin >> flag;
-
-      if (flag == "y") {
-        std::cout << "Handler is stopped!" << std::endl;
-        kill(0, SIGTERM);
-        break;
-
-      } else {
-        std::cout << "String write into file!" << std::endl;
-      }
-    }
-
-    if (buf.size() > BUFFER_SIZE) {
-      std::cerr << "Length out of buffer. Buffer size: " << BUFFER_SIZE << " characters" << std::endl;
-      continue;
-    }
+    getline(std::cin, buf);
+    std::cerr << "Enter string: (ctrl + c to exit)" << std::endl;
 
     Pipes filter_code = string_filter();
 
     switch(filter_code) {
       case FIRST:
-        write(pipe1_write, buf.c_str(), BUFFER_SIZE);
+        dup2(pipe1_write, STDOUT_FILENO);
+        std::cout << buf << std::endl;
         break;
 
       case SECOND:
-        write(pipe2_write, buf.c_str(), BUFFER_SIZE);
+        dup2(pipe2_write, STDOUT_FILENO);
+        std::cout << buf << std::endl;
         break;
     }
   }
