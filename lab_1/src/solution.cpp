@@ -86,6 +86,7 @@ Pipes string_filter() noexcept {
 
 void input_handler(int pipe1_write, int pipe2_write) noexcept {
   std::string buf;
+
   while (true) {
     getline(std::cin, buf);
     std::cerr << "Enter string: (ctrl + c to exit)" << std::endl;

@@ -16,7 +16,7 @@ void process_handler() {
  std::string buf;
 
   while(true) {
-    std::cin >> buf;
+    getline(std::cin, buf);
     std::string new_str;
 
     for (auto& e : buf) {
