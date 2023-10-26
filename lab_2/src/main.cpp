@@ -1,21 +1,21 @@
 #include <iostream>
-
+#include <fstream>
 #include "../include/solution.hpp"
 
 int main(int argc, char** argv) {
-  std::vector<Point> vec{
-    {1, 2, 3},
-    {4, 5, 6},
-    {7, 8, 9}, 
-    {4, 1, 8},
-    {9, 1, 4},
-    {18, 2, 3}, 
-    {12, 4, 5},
-    {11, 1, 8},
-    {13, 2, 4}
-  };
+  std::ifstream data("/home/kirill/Desktop/study/MAI_OS/lab_2/files/input.txt");
+  if (!data.is_open()) {
+    return -1;
+  }
+  std::vector<Point> vec;
+  Point p;
 
-  lab2::solution(vec, 1);
+  while (!data.eof()) {
+    data >> p;
+    vec.push_back(p);
+  }
+
+  lab2::solution(vec, std::atoi(argv[1]));
 
   return 0;
 }

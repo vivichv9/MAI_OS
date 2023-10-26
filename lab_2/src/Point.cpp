@@ -44,3 +44,8 @@ double Point::calculate_sum() const noexcept {
 std::vector<double> Point::get_all_coords() {
   return std::vector<double>{x, y, z};
 }
+
+std::istream& operator>>(std::istream& is, Point& rhs) {
+  is >> rhs.x >> rhs.y >> rhs.z;
+  return is;
+}

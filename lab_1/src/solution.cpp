@@ -112,12 +112,12 @@ void first_process_handler(int pipe1_read, int file1_desc) {
   int flag2 = dup2(file1_desc, STDOUT_FILENO);
 
   if (flag1 == -1 || flag2 == -1) {
-    throw std::runtime_error("lol");
+    throw std::runtime_error("error");
   }
 
   int status = execl("/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_first", "/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_first", NULL);
   if (status < 0) {
-    throw std::runtime_error("lol");
+    throw std::runtime_error("error");
   }
 }
 
@@ -126,12 +126,12 @@ void second_process_handler(int pipe2_read, int file2_desc) {
   int flag2 = dup2(file2_desc, STDOUT_FILENO);
 
   if (flag1 == -1 || flag2 == -1) {
-    throw std::runtime_error("lol");
+    throw std::runtime_error("error");
   }
 
   int status = execl("/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_second", "/home/kirill/Desktop/study/MAI_OS/lab_1/build/lab1_main_second", NULL);
   if (status < 0) {
-    throw std::runtime_error("lol");
+    throw std::runtime_error("error");
   }  
 }
 

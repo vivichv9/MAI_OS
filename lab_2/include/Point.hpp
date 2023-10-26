@@ -22,6 +22,8 @@ public:
   void set_y(double y) noexcept;
   void set_z(double z) noexcept;    
 
+  friend std::istream& operator>>(std::istream& is, Point& rhs);
+
   double calculate_sum() const noexcept;
 
   std::vector<double> get_all_coords();

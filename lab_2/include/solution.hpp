@@ -7,6 +7,7 @@
 #include <cmath>
 #include <tuple>
 #include <cstdint>
+#include <chrono>
 
 namespace lab2 {
 
