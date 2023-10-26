@@ -1,11 +1,9 @@
 #include "../include/solution.hpp"
 
-
 void lab2::solution(std::vector<Point>& vec, uint32_t threads_count) {
   std::vector<lab2::WorkerResult> res_vec;
   res_vec.resize(vec.size());
 
-//  uint32_t threads_count = 3;
   pthread_t* threads = static_cast<pthread_t*>(malloc(threads_count * sizeof(pthread_t)));
 
   MessageToThread* msgs = static_cast<MessageToThread*>(malloc(threads_count * sizeof(MessageToThread)));
@@ -35,6 +33,7 @@ void lab2::solution(std::vector<Point>& vec, uint32_t threads_count) {
 
   clock_t end = clock();
   auto ddd = std::chrono::steady_clock::now();
+  
   printf("elapsed %3.6f ms\n", ((double)(end - begin) / CLOCKS_PER_SEC) * 1000);
   std::cout << "Elapsed time in milliseconds: "
   << std::chrono::duration_cast<std::chrono::milliseconds>(ddd - start).count()

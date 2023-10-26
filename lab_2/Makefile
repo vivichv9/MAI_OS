@@ -5,7 +5,7 @@ build: clean
 	cd ./build; cmake ..; make all
 
 run:
-	./build/*_exe
+	./build/*_exe $(threads)
 
 clean:
 	rm -rf ./build/
