@@ -28,7 +28,11 @@ void lab2::solution(std::vector<Point>& vec, uint32_t threads_count) {
   }
 
   for (size_t i = 0; i < threads_count; ++i) {
-      pthread_join(threads[i], NULL);
+    int flag = pthread_join(threads[i], NULL);
+
+    if (flag < 0) {
+      throw std::runtime_error("Thread join return error code!");
+    }
   }
 
   clock_t end = clock();

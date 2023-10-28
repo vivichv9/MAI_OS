@@ -11,7 +11,7 @@ clean:
 	rm -rf ./build/
 
 strace:
-	strace -f ./build/*_exe 	
+	strace -f ./build/*_exe 16
 
 gen-data:
 	python3 ./generator/generator.py
