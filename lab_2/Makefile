@@ -1,4 +1,4 @@
-.PHONY: build run clean strace
+.PHONY: build run clean strace gen-data
 
 build: clean
 	mkdir build
@@ -12,3 +12,9 @@ clean:
 
 strace:
 	strace -f ./build/*_exe 	
+
+gen-data:
+	python3 ./generator/generator.py
+
+show-stat:
+	python3 ./analytics/create_graphic.py

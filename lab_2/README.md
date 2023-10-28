@@ -36,15 +36,26 @@ make build
 ```
 
 Run program:
+for example make run threads=5
 ```
-make run
+make run threads={THREADS_COUNT}
 ```
+
 
 Check strace:
 ```
 make strace
 ```
 
+generate input data:
+```
+make gen-data
+```
+
+show graphic with statistic: OX - count of workers, OY - elapsed time(ms)
+```
+make show-stat
+```
 
 
 

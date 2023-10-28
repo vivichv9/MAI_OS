@@ -8,6 +8,8 @@
 #include <tuple>
 #include <cstdint>
 #include <chrono>
+#include <fstream>
+#include <ios>
 
 namespace lab2 {
 
@@ -37,6 +39,10 @@ double calc_vector_norm(const vector_coords& v);
 
 void* worker_func(void* args);
 
-} // lab2
+std::vector<uint64_t> get_max_square_index(const std::vector<WorkerResult>& res_vec);
+
+void save_metrics(const std::string& file_name, auto& elapsed_time, uint64_t worker_count);
+
+} // namespace lab2
 
 #endif // SOLUTION_HPP_INCLUDED

@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     data >> p;
     vec.push_back(p);
   }
-
+  
   lab2::solution(vec, std::atoi(argv[1]));
 
   return 0;

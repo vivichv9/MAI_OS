@@ -1,7 +1,7 @@
 #include "../include/solution.hpp"
 
 void lab2::solution(std::vector<Point>& vec, uint32_t threads_count) {
-  std::vector<lab2::WorkerResult> res_vec;
+  std::vector<WorkerResult> res_vec;
   res_vec.resize(vec.size());
 
   pthread_t* threads = static_cast<pthread_t*>(malloc(threads_count * sizeof(pthread_t)));
@@ -32,15 +32,25 @@ void lab2::solution(std::vector<Point>& vec, uint32_t threads_count) {
   }
 
   clock_t end = clock();
-  auto ddd = std::chrono::steady_clock::now();
-  
-  printf("elapsed %3.6f ms\n", ((double)(end - begin) / CLOCKS_PER_SEC) * 1000);
-  std::cout << "Elapsed time in milliseconds: "
-  << std::chrono::duration_cast<std::chrono::milliseconds>(ddd - start).count()
+  auto chrono_end = std::chrono::steady_clock::now();
+
+  std::vector<uint64_t> indexes = lab2::get_max_square_index(res_vec);
+
+  std::cout << "Elapsed time in milliseconds(clock): " << static_cast<double>((end - begin) / CLOCKS_PER_SEC * 1000) << std::endl;
+
+  std::cout << "Elapsed time in milliseconds(chrono): "
+  << std::chrono::duration_cast<std::chrono::milliseconds>(chrono_end - start).count()
     << " ms" << std::endl;
 
+  lab2::save_metrics("/home/kirill/Desktop/study/MAI_OS/lab_2/files/metrics.txt", threads_count, std::chrono::duration_cast<std::chrono::milliseconds>(chrono_end - start).count());
+
+  std::cout << '[' << indexes[0] << ", " << indexes[1] << ", " << indexes[2] << ']' << std::endl;
+}
+
+std::vector<uint64_t> lab2::get_max_square_index(const std::vector<WorkerResult>& res_vec) {
   std::vector<uint64_t> indexes;
   double max_square = 0;
+
   for (auto& el : res_vec) {
     if (el.square > max_square) {
       max_square = el.square;
@@ -48,8 +58,7 @@ void lab2::solution(std::vector<Point>& vec, uint32_t threads_count) {
     }
   }
 
-  std::cout << '[' << indexes[0] << ", " << indexes[1] << ", " << indexes[2] << "] square: ";
-  std::cout << max_square << std::endl;
+  return indexes;
 }
 
 void* lab2::worker_func(void* args) {
@@ -110,4 +119,7 @@ double lab2::calculate_triangle_square(const Point& p1, const Point& p2, const P
   return len_c * 0.5;
 }
 
-
+void lab2::save_metrics(const std::string& file_name, auto& elapsed_time, uint64_t worker_count) {
+  std::ofstream file(file_name, std::ios::app);
+  file << worker_count << ' ' << elapsed_time << std::endl;
+}
