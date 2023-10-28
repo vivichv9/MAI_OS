@@ -12,7 +12,8 @@ with open('/home/kirill/Desktop/study/MAI_OS/lab_2/files/metrics.txt', 'r') as d
         Y.append(float(ROWS[0]))
 
 plt.plot(X, Y)
-plt.title('Line Graph using CSV')
-plt.xlabel('X')
-plt.ylabel('Y')
+plt.title('Time of workers stat')
+plt.xlabel('Count of workers')
+plt.ylabel('Time,[ms]')
+plt.grid()
 plt.show()
