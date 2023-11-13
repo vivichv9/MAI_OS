@@ -9,7 +9,8 @@ add_library(${PROJECT_NAME}_lib ${SOURCES})
 
 target_include_directories(${PROJECT_NAME}_lib PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
-target_compile_options(${PROJECT_NAME}_lib PUBLIC "-Wall" "-Werror" "-lrt")
+target_compile_options(${PROJECT_NAME}_lib PUBLIC "-Wall" "-g" "-Werror" "-lrt" "-pthread")
+target_link_options(${PROJECT_NAME}_lib PUBLIC "-lrt" "-pthread")
 
 set_target_properties(${PROJECT_NAME}_lib PROPERTIES
                       CXX_STANDARD 20

@@ -11,4 +11,8 @@ clean:
 	rm -rf ./build/
 
 strace:
-	strace -f ./build/*_main_exe 	
+	strace -f ./build/*_main_exe
+
+unlink-shm:
+	chmod +x ./bash/unlink_mmf.sh
+	./bash/unlink_mmf.sh

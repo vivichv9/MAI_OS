@@ -1,4 +1,4 @@
-#ifndef SOLUTION_HPP_INCLUDED
+#ifndef SOLUTION_HPP_INCLUDED 
 #define SOLUTION_HPP_INCLUDED
 
 #include "Pipes.h"
@@ -14,24 +14,28 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <semaphore.h>
 
 namespace lab3 {
 
 #define BUFFER 4096
+#define N 1
 
 void solution();
 
 void open_files(std::pair<int, int>& files_desc);
 
-void shm_files_open(std::pair<void*, void*>& shm_files_desc);
+void shm_files_open(std::pair<void*, void*>& shm_files, std::pair<int, int>& desc);
+
+sem_t* create_semaphore(const char* sem_name, size_t count);
 
 Pipes string_filter() noexcept;
 
-void input_handler(const std::pair<void*, void*>& shm_files_desc) noexcept;
+void input_handler(std::pair<void*, void*>& shm_files, sem_t* sem, sem_t* empty, sem_t* full);
 
-void first_process_handler(void* mmf1, int file1_desc);
+void first_process_handler(int mmf1, int file1_desc, const char* name);
 
-void second_process_handler(void* mmf2, int file2_desc);
+void second_process_handler(int mmf2, int file2_desc, const char* name);
 
 void create_process(int& pid1, int& pid2);
   
