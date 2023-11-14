@@ -4,18 +4,22 @@ void lab3::solution() {
   std::pair<int, int> files_desc;
   void* shm_file = nullptr;
   int shm_desc = 0;
+
+  std::string mmf_name = "lab3_mmf";
   const char* sem_name = "lab3_semaphore";
+  const char* isempty_sem_name = "lab3_is_empty";
+  const char* isfull_sem_name = "lab3_is_full";
 
   pid_t pid1 = -1;
   pid_t pid2 = -1;
 
   try {
     lab3::open_files(files_desc);
-    lab3::shm_files_open(shm_file, shm_desc);
+    lab3::shm_file_open(mmf_name, shm_file, shm_desc);
   
     auto sem = create_semaphore(sem_name, 1);
-    auto empty = create_semaphore("is_empty", N);
-    auto full = create_semaphore("is_full", 0);
+    auto empty = create_semaphore(isempty_sem_name, N);
+    auto full = create_semaphore(isfull_sem_name, 0);
 
     lab3::create_process(pid1, pid2);
 
@@ -23,10 +27,10 @@ void lab3::solution() {
       lab3::input_handler(shm_file, sem, empty, full);
     
     } else if (pid1 == 0) {
-      lab3::first_process_handler(shm_desc, files_desc.first, sem_name);
+      lab3::first_process_handler(mmf_name, files_desc.first, sem_name, isempty_sem_name, isfull_sem_name);
 
     } else if (pid2 == 0 && pid1 != 0) {
-      lab3::second_process_handler(shm_desc, files_desc.second, sem_name);
+      lab3::second_process_handler(mmf_name, files_desc.second, sem_name, isempty_sem_name, isfull_sem_name);
     }
 
   } catch (std::runtime_error& e) {
@@ -76,13 +80,11 @@ sem_t* lab3::create_semaphore(const char* sem_name, size_t count) {
   return s;
 }
 
-void lab3::shm_files_open(void*& shm_file, int& desc) {
-  std::string mmf_name = "lab3_mmf";
-
-  int mmf = shm_open("lab3_mmf", O_CREAT | O_RDWR, 0666);
+void lab3::shm_file_open(std::string name, void*& shm_file, int& desc) {
+  int mmf = shm_open(name.c_str(), O_CREAT | O_RDWR, 0666);
 
   if (mmf < 0) {
-    throw std::runtime_error("Error with open mmf: " + mmf_name);
+    throw std::runtime_error("Error with open mmf: " + name);
   }
 
   desc = mmf;
@@ -95,8 +97,8 @@ void lab3::shm_files_open(void*& shm_file, int& desc) {
 
   void* mmf_ptr = mmap(nullptr, BUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, mmf, 0);
 
-  if (mmf_ptr == MAP_FAILED || mmf_ptr == nullptr) {
-    throw std::runtime_error("Error with memory mapping with file: " + mmf_name);
+  if (mmf_ptr == MAP_FAILED) {
+    throw std::runtime_error("Error with memory mapping with file: " + name);
   }
 
   shm_file = mmf_ptr;
@@ -118,21 +120,21 @@ void lab3::input_handler(void* shm_file, sem_t* sem, sem_t* empty, sem_t* full) 
     std::cout << "Enter string: (ctrl + c to exit)" << std::endl;
     std::cin >> buf;
 
+    uint32_t size = buf.size();
+
     Pipes filter_code = string_filter();
   
     sem_wait(empty);
     sem_wait(sem);
     switch(filter_code) {
       case FIRST:
-        memset(shm_file, '\0', BUFFER);
-        std::copy(buf.c_str(), buf.c_str() + buf.size(), (char*) shm_file);
-        // memcpy(shm_file + buf.size(), buf.c_str(), buf.size());
+        memcpy(shm_file, &size, sizeof(size));
+        memcpy(static_cast<char*>(shm_file) + sizeof(size), buf.c_str(), buf.size());
         break; 
 
       case SECOND:
-        memset(shm_file, '\0', BUFFER);
-        std::copy(buf.c_str(), buf.c_str() + buf.size(), (char*) shm_file);
-        // memcpy(shm_file, buf.c_str(), buf.size());
+        memcpy(shm_file, &size, sizeof(size));
+        memcpy(static_cast<char*>(shm_file) + sizeof(size), buf.c_str(), buf.size());
         break;
     }
     sem_post(sem);
@@ -141,27 +143,43 @@ void lab3::input_handler(void* shm_file, sem_t* sem, sem_t* empty, sem_t* full) 
   }
 }
 
-void lab3::first_process_handler(int mmf1, int file1_desc, const char* name) {
+void lab3::first_process_handler(std::string mmf_name, int file1_desc, const char* sem_name, const char* empty_sem_name, const char* full_sem_name) {
   int flag2 = dup2(file1_desc, STDOUT_FILENO);
 
   if (flag2 == -1) {
     throw std::runtime_error("error dup2 first_process_handler");
   }
 
-  int status = execl("/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_first", "/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_first", std::to_string(mmf1), name, NULL);
+  int status = execl(
+    "/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_first",
+    "/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_first",
+    mmf_name.c_str(),
+    sem_name,
+    empty_sem_name,
+    full_sem_name,
+    NULL);
+
   if (status < 0) {
     throw std::runtime_error("error execl first_process_handler");
   }
 }
 
-void lab3::second_process_handler(int mmf2, int file2_desc, const char* name) {
+void lab3::second_process_handler(std::string mmf_name, int file2_desc, const char* sem_name, const char* empty_sem_name, const char* full_sem_name) {
   int flag2 = dup2(file2_desc, STDOUT_FILENO);
 
   if (flag2 == -1) {
     throw std::runtime_error("error dup2 second_process_handler");
   }
 
-  int status = execl("/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_second", "/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_second", std::to_string(mmf2), name, NULL);
+  int status = execl(
+    "/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_second", 
+    "/home/kirill/Desktop/study/MAI_OS/lab_3/build/lab3_main_second", 
+    mmf_name.c_str(), 
+    sem_name, 
+    empty_sem_name,
+    full_sem_name,
+    NULL);
+
   if (status < 0) {
     throw std::runtime_error("error execl second_process_handler");
   }  

@@ -1,21 +1,19 @@
 #include "process.h"
 
 int main(int argc, char** argv) {
-  std::string mmf_name2 = "lab3_mmf";
-  int mmf2 = shm_open(mmf_name2.c_str(), O_CREAT | O_RDWR, 0666);
-  void* mmf2_ptr = mmap(nullptr, BUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, mmf2, 0);
+  const char* mmf_name = argv[1];
+  const char* sem_name = argv[2];
+  const char* isfull_sem_name = argv[4];
+  const char* isempty_sem_name = argv[3];
+
+  void* mmf_ptr = nullptr;
+  int shm_desc = 0;
   
-  if (mmf2_ptr == MAP_FAILED) {
-    throw std::runtime_error("Map failed second process");
-  }
+  lab3::shm_file_open(mmf_name, mmf_ptr, shm_desc);
 
-  sem_t* sem = sem_open(argv[2], O_CREAT | O_RDWR, 0666, 1);
-  sem_t* full = sem_open("is_full", O_CREAT | O_RDWR, 0666, 0);
-  sem_t* empty = sem_open("is_empty", O_CREAT | O_RDWR, 0666, 1);
+  sem_t* sem = lab3::create_semaphore(sem_name, 1);
+  sem_t* full = lab3::create_semaphore(isfull_sem_name, 0);
+  sem_t* empty = lab3::create_semaphore(isempty_sem_name, N);
 
-  if (sem == SEM_FAILED || full == SEM_FAILED || empty == SEM_FAILED) {
-    throw std::runtime_error("Semaphore failed first process");
-  }
-
-  lab3::process_handler(mmf2_ptr, sem, full, empty);
+  lab3::process_handler(mmf_ptr, sem, full, empty);
 }

@@ -25,7 +25,7 @@ void solution();
 
 void open_files(std::pair<int, int>& files_desc);
 
-void shm_files_open(void*& shm_file, int& desc);
+void shm_file_open(std::string name, void*& shm_file, int& desc);
 
 sem_t* create_semaphore(const char* sem_name, size_t count);
 
@@ -33,9 +33,9 @@ Pipes string_filter() noexcept;
 
 void input_handler(void* shm_file, sem_t* sem, sem_t* empty, sem_t* full);
 
-void first_process_handler(int mmf1, int file1_desc, const char* name);
+void first_process_handler(std::string mmf_name, int file1_desc, const char* sem_name, const char* empty_sem_name, const char* full_sem_name);
 
-void second_process_handler(int mmf2, int file2_desc, const char* name);
+void second_process_handler(std::string mmf_name, int file2_desc, const char* sem_name, const char* empty_sem_name, const char* full_sem_name);
 
 void create_process(int& pid1, int& pid2);
   
