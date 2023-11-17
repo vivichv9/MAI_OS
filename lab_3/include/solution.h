@@ -31,7 +31,7 @@ sem_t* create_semaphore(const char* sem_name, size_t count);
 
 Pipes string_filter() noexcept;
 
-void input_handler(void* shm_file, sem_t* sem, sem_t* empty, sem_t* full);
+void input_handler(std::pair<void*, void*>&& shm_files, std::pair<sem_t*, sem_t*>&& sem, std::pair<sem_t*, sem_t*>&& empty, std::pair<sem_t*, sem_t*>&& full);
 
 void first_process_handler(std::string mmf_name, int file1_desc, const char* sem_name, const char* empty_sem_name, const char* full_sem_name);
 

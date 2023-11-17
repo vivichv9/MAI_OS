@@ -2,7 +2,7 @@
 
 build: clean
 	mkdir build
-	cd ./build; cmake ..; make all
+	cd ./build; cmake ..; cmake --build .
 
 run:
 	./build/*_main_exe
@@ -14,5 +14,4 @@ strace:
 	strace -f ./build/*_main_exe
 
 unlink-shm:
-	chmod +x ./bash/unlink_mmf.sh
-	./bash/unlink_mmf.sh
+	rm /dev/shm/*lab3*

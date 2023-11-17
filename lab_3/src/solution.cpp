@@ -2,35 +2,50 @@
 
 void lab3::solution() {
   std::pair<int, int> files_desc;
+
   void* shm_file = nullptr;
   int shm_desc = 0;
 
-  std::string mmf_name = "lab3_mmf";
-  const char* sem_name = "lab3_semaphore";
-  const char* isempty_sem_name = "lab3_is_empty";
-  const char* isfull_sem_name = "lab3_is_full";
+  std::string mmf_name = "lab3_mmf_1";
+  const char* sem_name = "lab3_semaphore_1";
+  const char* isempty_sem_name = "lab3_is_empty_1";
+  const char* isfull_sem_name = "lab3_is_full_1";
+
+  void* shm_file_2 = nullptr;
+  int shm_desc_2 = 0;
+
+  std::string mmf_name_2 = "lab3_mmf_2";
+  const char* sem_name_2 = "lab3_semaphore_2";
+  const char* isempty_sem_name_2 = "lab3_is_empty_2";
+  const char* isfull_sem_name_2 = "lab3_is_full_2";
 
   pid_t pid1 = -1;
   pid_t pid2 = -1;
 
   try {
     lab3::open_files(files_desc);
+
     lab3::shm_file_open(mmf_name, shm_file, shm_desc);
+    lab3::shm_file_open(mmf_name_2, shm_file_2, shm_desc_2);
   
-    auto sem = create_semaphore(sem_name, 1);
-    auto empty = create_semaphore(isempty_sem_name, N);
-    auto full = create_semaphore(isfull_sem_name, 0);
+    auto sem = lab3::create_semaphore(sem_name, 1);
+    auto empty = lab3::create_semaphore(isempty_sem_name, N);
+    auto full = lab3::create_semaphore(isfull_sem_name, 0);
+
+    auto sem_2 = lab3::create_semaphore(sem_name_2, 1);
+    auto empty_2 = lab3::create_semaphore(isempty_sem_name_2, N);
+    auto full_2 = lab3::create_semaphore(isfull_sem_name_2, 0);
 
     lab3::create_process(pid1, pid2);
 
     if (pid1 != 0 && pid2 != 0) {
-      lab3::input_handler(shm_file, sem, empty, full);
+      lab3::input_handler({shm_file, shm_file_2}, {sem, sem_2}, {empty, empty_2}, {full, full_2});
     
     } else if (pid1 == 0) {
       lab3::first_process_handler(mmf_name, files_desc.first, sem_name, isempty_sem_name, isfull_sem_name);
 
     } else if (pid2 == 0 && pid1 != 0) {
-      lab3::second_process_handler(mmf_name, files_desc.second, sem_name, isempty_sem_name, isfull_sem_name);
+      lab3::second_process_handler(mmf_name_2, files_desc.second, sem_name_2, isempty_sem_name_2, isfull_sem_name_2);
     }
 
   } catch (std::runtime_error& e) {
@@ -43,10 +58,10 @@ void lab3::open_files(std::pair<int, int>& files_descs) {
   std::string file_name_1;
   std::string file_name_2;
 
-  // std::cout << "Please enter first file name: ";
-  // std::cin >> file_name_1;
-  // std::cout << "Please enter second file name: ";
-  // std::cin >> file_name_2;
+  std::cout << "Please enter first file name: ";
+  std::cin >> file_name_1;
+  std::cout << "Please enter second file name: ";
+  std::cin >> file_name_2;
 
   file_name_1 = "/home/kirill/Desktop/study/MAI_OS/lab_3/files/a.txt";
   file_name_2 = "/home/kirill/Desktop/study/MAI_OS/lab_3/files/b.txt";
@@ -114,7 +129,7 @@ Pipes lab3::string_filter() noexcept {
   return Pipes::SECOND;
 }
 
-void lab3::input_handler(void* shm_file, sem_t* sem, sem_t* empty, sem_t* full) {
+void lab3::input_handler(std::pair<void*, void*>&& shm_files, std::pair<sem_t*, sem_t*>&& sem, std::pair<sem_t*, sem_t*>&& empty, std::pair<sem_t*, sem_t*>&& full) {
   while (true) {
     std::string buf;
     std::cout << "Enter string: (ctrl + c to exit)" << std::endl;
@@ -123,23 +138,29 @@ void lab3::input_handler(void* shm_file, sem_t* sem, sem_t* empty, sem_t* full) 
     uint32_t size = buf.size();
 
     Pipes filter_code = string_filter();
-  
-    sem_wait(empty);
-    sem_wait(sem);
     switch(filter_code) {
       case FIRST:
-        memcpy(shm_file, &size, sizeof(size));
-        memcpy(static_cast<char*>(shm_file) + sizeof(size), buf.c_str(), buf.size());
+        sem_wait(empty.first);
+        sem_wait(sem.first);
+         
+        memcpy(shm_files.first, &size, sizeof(size));
+        memcpy(static_cast<char*>(shm_files.first) + sizeof(size), buf.c_str(), buf.size());
+
+        sem_post(sem.first);
+        sem_post(full.first);
         break; 
 
       case SECOND:
-        memcpy(shm_file, &size, sizeof(size));
-        memcpy(static_cast<char*>(shm_file) + sizeof(size), buf.c_str(), buf.size());
+        sem_wait(empty.second);
+        sem_wait(sem.second);
+
+        memcpy(shm_files.second, &size, sizeof(size));
+        memcpy(static_cast<char*>(shm_files.second) + sizeof(size), buf.c_str(), buf.size());
+
+        sem_post(sem.second);
+        sem_post(full.second);        
         break;
     }
-    sem_post(sem);
-    sem_post(full);
-
   }
 }
 
