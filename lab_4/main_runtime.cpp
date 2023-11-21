@@ -1,9 +1,6 @@
 #include <iostream>
 #include <dlfcn.h>
 
-#include "third_party/prime_numbers/include/calculate_prime_numbers.hpp"
-#include "third_party/gcf/include/calculate_gcf.hpp"
-
 int (*euclid_GCF)(int, int);
 int (*naive_GCF)(int, int);
 int (*naive_prime_count)(int, int);
@@ -71,7 +68,8 @@ int main(int argc, char** argv) {
   int impl_flag = 0;
 
   switch (mode) {
-    case 1:
+    case 2:
+    std::cout << "Input implementation flag(0 - naive, oth - euclid): ";
       std::cin >> impl_flag;
       
       if (impl_flag == 0) {
@@ -84,7 +82,8 @@ int main(int argc, char** argv) {
 
     break;
 
-    case 2:
+    case 1:
+      std::cout << "Input implementation flag(0 - naive, oth - eratosthenes): ";
       std::cin >> impl_flag;
       
       if (impl_flag == 0) {
