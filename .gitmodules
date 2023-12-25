@@ -1,0 +1,9 @@
+[submodule "KP/third_party/inipp"]
+	path = KP/third_party/inipp
+	url = https://github.com/mcmtroffaes/inipp
+[submodule "lab_5-7/third_party/zmqpp"]
+	path = lab_5-7/third_party/zmqpp
+	url = https://github.com/zeromq/zmqpp.git
+[submodule "laba5-7/third_party/cppzmq"]
+	path = laba5-7/third_party/cppzmq
+	url = https://github.com/zeromq/cppzmq.git

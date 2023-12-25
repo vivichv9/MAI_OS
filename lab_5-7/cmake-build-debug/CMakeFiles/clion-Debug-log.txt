@@ -1,0 +1,21 @@
+/snap/clion/261/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/261/bin/ninja/linux/x64/ninja -G Ninja -S /home/kirill/Desktop/study/MAI_OS/lab_5-7 -B /home/kirill/Desktop/study/MAI_OS/lab_5-7/cmake-build-debug
+CMake Warning at CMakeLists.txt:4 (find_package):
+  By not providing "Findwrap_zmq.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "wrap_zmq",
+  but CMake did not find one.
+
+  Could not find a package configuration file provided by "wrap_zmq" with any
+  of the following names:
+
+    wrap_zmqConfig.cmake
+    wrap_zmq-config.cmake
+
+  Add the installation prefix of "wrap_zmq" to CMAKE_PREFIX_PATH or set
+  "wrap_zmq_DIR" to a directory containing one of the above files.  If
+  "wrap_zmq" provides a separate development package or SDK, be sure it has
+  been installed.
+
+
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/kirill/Desktop/study/MAI_OS/lab_5-7/cmake-build-debug
