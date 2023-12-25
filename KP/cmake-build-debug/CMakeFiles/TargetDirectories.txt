@@ -1,0 +1,6 @@
+/home/kirill/Desktop/study/MAI_OS/KP/cmake-build-debug/CMakeFiles/kp_lib.dir
+/home/kirill/Desktop/study/MAI_OS/KP/cmake-build-debug/CMakeFiles/kp_exe.dir
+/home/kirill/Desktop/study/MAI_OS/KP/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/kirill/Desktop/study/MAI_OS/KP/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/kirill/Desktop/study/MAI_OS/KP/cmake-build-debug/third_party/inipp/CMakeFiles/edit_cache.dir
+/home/kirill/Desktop/study/MAI_OS/KP/cmake-build-debug/third_party/inipp/CMakeFiles/rebuild_cache.dir

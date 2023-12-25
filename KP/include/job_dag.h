@@ -1,8 +1,8 @@
-//
-// Created by kirill on 22.12.23.
-//
-
 #ifndef KP_JOB_DAG_H
 #define KP_JOB_DAG_H
+
+namespace kp {
+
+}
 
 #endif //KP_JOB_DAG_H
