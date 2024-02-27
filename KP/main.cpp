@@ -1,20 +1,52 @@
-#include "iostream"
-#include "fstream"
-#include "inipp.h"
+#include <iostream>
+#include <fstream>
 
-int main(int argc, char** argv) {
+#include "solution.hpp"
+
+int main() {
+  std::string config_file_name;
+  std::cin >> config_file_name;
+  std::ifstream file(config_file_name);
+
   inipp::Ini<char> ini;
-  std::ifstream is("/home/kirill/Desktop/study/MAI_OS/KP/config/config.ini");
-  ini.parse(is);
-  std::cout << "raw ini file:" << std::endl;
-  ini.generate(std::cout);
-  ini.strip_trailing_comments();
-  ini.default_section(ini.sections["DEFAULT"]);
-  ini.interpolate();
-  std::cout << "ini file after default section and interpolation:" << std::endl;
-  ini.generate(std::cout);
-  int compression_level = -1;
-  inipp::get_value(ini.sections["bitbucket.org"], "CompressionLevel", compression_level);
-  std::cout << "bitbucket.org compression level: " << compression_level << std::endl;
+  ini.parse(file);
+
+  auto parsed_config = ini.sections.at("jobs");
+  std::map<std::string, std::vector<std::string>> job_map;
+
+  for (auto& el : parsed_config) {
+    job_map.insert({el.first, kp::split(el.second)});
+  }
+
+  if (!kp::isValidDAG(job_map)) {
+    throw std::runtime_error("DAG contains a cycle ");
+  }
+
+  if (kp::hasOnlyOneComponent(job_map)) {
+    throw std::runtime_error("DAG has more than one connectivity component");
+  }
+
+  if (!kp::hasStartAndEndJobs(job_map)) {
+    throw std::runtime_error("DAG doesn't exist first oe end job");
+  }
+
+  std::cout << "DAG is valid!" << std::endl << std::endl;
+  sleep(1);
+
+  std::vector<std::string> jobs;
+
+  jobs.reserve(job_map.size());
+  for (const auto& job : job_map) {
+    jobs.push_back(job.first);
+  }
+
+  std::unordered_set<std::string> visitedJobs;
+
+  for (const std::string& job : jobs) {
+    kp::processJob(job, job_map, visitedJobs);
+  }
+
+  std::cout << "All jobs completed!" << std::endl;
+
   return 0;
 }

@@ -6,8 +6,7 @@ add_subdirectory(third_party/inipp)
 
 # Project lib
 add_library(${PROJECT_NAME}_lib
-        src/config_parser.cpp
-        src/job_dag.cpp)
+        src/solution.cpp)
 
 target_include_directories(${PROJECT_NAME}_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_options(${PROJECT_NAME}_lib PUBLIC "-Wall" "-Werror" "-g" "-fsanitize=undefined" "-fsanitize=address")
